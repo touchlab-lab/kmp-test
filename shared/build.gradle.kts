@@ -10,13 +10,7 @@ version = "1.0"
 
 kotlin {
     android()
-
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        else -> ::iosX64
-    }
-
-    iosTarget("ios") {}
+    ios("ios") {}
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -25,7 +19,7 @@ kotlin {
         frameworkName = "shared"
         podfile = project.file("../iosApp/Podfile")
     }
-    
+
     sourceSets {
         val commonMain by getting
         val commonTest by getting {
@@ -70,6 +64,33 @@ android {
     buildTypes {
         debug {
             isTestCoverageEnabled = true
+        }
+    }
+}
+
+
+kotlin {
+    sourceSets {
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+
+        val androidTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation("junit:junit:4.13.2")
+            }
+        }
+
+        val androidAndroidTest by getting {
+            dependencies {
+                implementation("androidx.test.ext:junit:1.1.3")
+                implementation("androidx.test.ext:junit-ktx:1.1.3")
+                implementation("androidx.test.espresso:espresso-core:3.4.0")
+            }
         }
     }
 }
